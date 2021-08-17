@@ -1,6 +1,5 @@
 package com.alivin.myblog.utils;
 
-import com.alivin.myblog.utils.api.IErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +28,16 @@ public class CommonResult<T> {
     public static <T> CommonResult<T> success(T data) {
         return new CommonResult<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), data);
     }
+
+    /**
+     * 成功返回提示信息
+     *
+     * @param message 提示信息
+     */
+    public static <T> CommonResult<T> success(String message) {
+        return new CommonResult<>(ResultCode.SUCCESS.getCode(), message, null);
+    }
+
 
     /**
      * 成功返回结果和提示信息

@@ -1,4 +1,4 @@
-package com.alivin.myblog.utils.api;
+package com.alivin.myblog.utils;
 
 /**
  * 封装 API 的错误码

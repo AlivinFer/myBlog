@@ -1,7 +1,5 @@
 package com.alivin.myblog.utils;
 
-import com.alivin.myblog.utils.api.IErrorCode;
-
 /**
  * 枚举常用API操作码
  *
