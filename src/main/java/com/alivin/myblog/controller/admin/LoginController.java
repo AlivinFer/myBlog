@@ -2,7 +2,7 @@ package com.alivin.myblog.controller.admin;
 
 import com.alivin.myblog.constant.WebConst;
 import com.alivin.myblog.exception.BusinessException;
-import com.alivin.myblog.mbg.model.MbAdmin;
+import com.alivin.myblog.model.UserDomain;
 import com.alivin.myblog.service.api.UserService;
 import com.alivin.myblog.utils.CommonResult;
 import com.alivin.myblog.utils.IPKit;
@@ -45,6 +45,7 @@ public class LoginController {
     @ApiOperation("跳转登录页")
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login() {
+
         return "/admin/login";
     }
 
@@ -55,20 +56,20 @@ public class LoginController {
             HttpServletRequest request,
             HttpServletResponse response,
             @ApiParam(name = "username", value = "用户名", required = true)
-            @RequestParam(name = "username")
+            @RequestParam(name = "username", required = true)
                     String username,
-            @ApiParam(name = "password", value = "密码")
-            @RequestParam(value = "password")
+            @ApiParam(name = "password", value = "密码", required = true)
+            @RequestParam(value = "password", required = true)
                     String password,
             @ApiParam(name = "rememberMe", value = "记住我")
-            @RequestParam(value = "rememberMe")
+            @RequestParam(value = "rememberMe", required = false)
                     String rememberMe
     ) {
         // 获取ip并过滤登录时缓存的bug
-        String ip= IPKit.getAddrByRequest(request);
+        String ip = IPKit.getAddrByRequest(request);
         Integer error_count = cache.hget("login_error_count",ip);
         try {
-            MbAdmin userInfo = userService.login(username, password);
+            UserDomain userInfo = userService.login(username, password);
             request.getSession().setAttribute(WebConst.LOGIN_SESSION_KEY, userInfo);
             if (StringUtils.isNotBlank(rememberMe)) {
                 TaleUtils.setCookie(response, userInfo.getId());

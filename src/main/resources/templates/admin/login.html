@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<!--th:with 局部变量 5种背景随意出现-->
-<!--<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="pic=${RandomStringUtils.random(5, '.png')}"
-      th:style="'background:url(/admin/images/bg/'+@{${pic}}+');no-repeat; background-size: cover;'">-->
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:style="'background:url(/admin/images/bg/2.png);no-repeat; background-size: cover;'">
+<!--th:with 局部变量 5种背景随意出现,在 html 中定义，可在整个 html 中使用-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="pic=${@commons.random(5, '.png')}"
+      th:style="'background:url(/admin/images/bg/'+@{${pic}}+');no-repeat; background-size: cover;'">
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org" th:style="'background:url(/admin/images/bg/2.png);no-repeat; background-size: cover;'">-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -54,7 +54,8 @@
 
 </head>
 
-<body th:style="'background:url(/admin/images/bg/2.png);no-repeat; background-size: cover;'">
+<body th:style="'background:url(/admin/images/bg/'+@{${pic}}+');no-repeat; background-size: cover;'" >
+<!--<body th:style="'background:url(/admin/images/bg/2.png);no-repeat; background-size: cover;'">-->
 
 <div style="margin: 0 auto; padding-bottom: 0%; padding-top: 7.5%; width: 380px;">
   <div class="panel panel-color panel-danger panel-pages panel-shadow">
@@ -113,11 +114,12 @@
       url: '/admin/login',
       data: $('#loginForm').serialize(),
       success: function (result) {
-        if (result && result.code === 200) {
+          window.location.href = '/admin/index';
+        /*if (result && result.code === 200) {
           window.location.href = '/admin/index';
         } else {
           tale.alertError(result.message || '登录失败');
-        }
+        }*/
       }
     });
     return false;

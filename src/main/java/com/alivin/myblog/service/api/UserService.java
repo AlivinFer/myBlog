@@ -1,6 +1,6 @@
 package com.alivin.myblog.service.api;
 
-import com.alivin.myblog.mbg.model.MbAdmin;
+import com.alivin.myblog.model.UserDomain;
 import org.apache.ibatis.annotations.Param;
 
 
@@ -12,13 +12,13 @@ import org.apache.ibatis.annotations.Param;
 public interface UserService {
 
     // 更新用戶信息
-    int updateByPrimaryKey(MbAdmin record);
+    int updateUserInfo(UserDomain user);
 
     // 通过主键查找用户
-    MbAdmin selectByPrimaryKey(Long id);
+    UserDomain selectUserById(Long id);
 
     // 根据用户名和密码获取用户信息
-    MbAdmin login(@Param("username") String username,
+    UserDomain login(@Param("username") String username,
                   @Param("password") String password);
 }
 

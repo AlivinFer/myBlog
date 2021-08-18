@@ -1,6 +1,6 @@
 package com.alivin.myblog.dao;
 
-import com.alivin.myblog.mbg.model.MbAdmin;
+import com.alivin.myblog.model.UserDomain;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -14,15 +14,24 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserDao {
 
-  /*  // 获取所有用户信息
-    public List<MbAdmin> getUserInfo();
+    /**
+     * 更新用户信息
+     *
+     * @param user 用户
+     */
+    int updateUserInfo(UserDomain user);
 
-    // 根据 id 获取用户信息
-    public MbAdmin getUserInfoById(@Param("id") Long id);
+    /**
+     * 根据主键编号获取用户信息
+     * @param id 用户 id
+     */
+    UserDomain getUserInfoById(@Param("id") Long id);
 
-    // 更新用户信息
-    public int updateUserInfo(MbAdmin mbAdmin);*/
-
-    // 根据用户名和密码获取用户信息
-    public MbAdmin getUserInfoByCond(@Param("username") String username, @Param("password") String password);
+    /**
+     * 根据用户名和密码获取用户信息
+     *
+     * @param username 用户名
+     * @param password 密码
+     */
+    UserDomain getUserInfoByCond(@Param("username") String username, @Param("password") String password);
 }

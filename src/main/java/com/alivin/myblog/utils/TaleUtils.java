@@ -2,7 +2,7 @@ package com.alivin.myblog.utils;
 
 import com.alivin.myblog.constant.WebConst;
 import com.alivin.myblog.exception.BusinessException;
-import com.alivin.myblog.mbg.model.MbAdmin;
+import com.alivin.myblog.model.UserDomain;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.Extension;
 import org.commonmark.ext.gfm.tables.TablesExtension;
@@ -126,7 +126,7 @@ public class TaleUtils {
                     return newDataSource;
                 }
                 DriverManagerDataSource managerDataSource = new DriverManagerDataSource();
-                managerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
+                managerDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
                 managerDataSource.setPassword(properties.getProperty("spring.datasource.password"));
                 String str = "jdbc:mysql://" + properties.getProperty("spring.datasource.url") + "/" + properties.getProperty("spring.datasource.dbname") + "?useUnicode=true&characterEncoding=utf-8&useSSL=false";
                 managerDataSource.setUrl(str);
@@ -142,12 +142,12 @@ public class TaleUtils {
      *
      * @return
      */
-    public static MbAdmin getLoginUser(HttpServletRequest request) {
+    public static UserDomain getLoginUser(HttpServletRequest request) {
         HttpSession session = request.getSession();
         if (null == session) {
             return null;
         }
-        return (MbAdmin) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
+        return (UserDomain) session.getAttribute(WebConst.LOGIN_SESSION_KEY);
     }
 
 
@@ -162,9 +162,10 @@ public class TaleUtils {
             Cookie cookie = cookieRaw(WebConst.USER_IN_COOKIE, request);
             if (cookie != null && cookie.getValue() != null) {
                 try {
-                    String uid = Tools.deAes(cookie.getValue(), WebConst.AES_SALT);
-                    return StringUtils.isNotBlank(uid) && Tools.isNumber(uid) ? Integer.valueOf(uid) : null;
+                    String id = Tools.deAes(cookie.getValue(), WebConst.AES_SALT);
+                    return StringUtils.isNotBlank(id) && Tools.isNumber(id) ? Integer.valueOf(id) : null;
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -197,11 +198,11 @@ public class TaleUtils {
     public static void setCookie(HttpServletResponse response, Long id) {
         try {
             String val = Tools.enAes(id.toString(), WebConst.AES_SALT);
-            boolean isSSL = false;
+//            boolean isSSL = false;
             Cookie cookie = new Cookie(WebConst.USER_IN_COOKIE, val);
             cookie.setPath("/");
             cookie.setMaxAge(60 * 30);
-            cookie.setSecure(isSSL);
+            cookie.setSecure(false);
             response.addCookie(cookie);
         } catch (Exception e) {
             e.printStackTrace();
@@ -368,24 +369,22 @@ public class TaleUtils {
      * @return
      */
     public static String getRandomNumber(int size) {
-        String num = "";
+        StringBuilder num = new StringBuilder();
 
         for (int i = 0; i < size; ++i) {
             double a = Math.random() * 9.0D;
             a = Math.ceil(a);
             int randomNum = (new Double(a)).intValue();
-            num = num + randomNum;
+            num.append(randomNum);
         }
 
-        return num;
+        return num.toString();
     }
 
     /**
      * 获取保存文件的位置,jar所在目录的路径
-     *
-     * @return
      */
-    public static String getUplodFilePath() {
+    public static String getUploadFilePath() {
         String path = TaleUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         path = path.substring(1, path.length());
         try {
@@ -398,5 +397,6 @@ public class TaleUtils {
         File file = new File("");
         return file.getAbsolutePath() + "/";
     }
+
 
 }
