@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.alivin.myblog.dao.UserDao">
     <resultMap id="BaseResultMap" type="com.alivin.myblog.model.UserDomain">
-        <id column="id" jdbcType="BIGINT" property="id" />
+        <id column="uid" jdbcType="INTEGER" property="uid" />
         <result column="username" jdbcType="VARCHAR" property="username" />
         <result column="password" jdbcType="VARCHAR" property="password" />
         <result column="homeUrl" jdbcType="VARCHAR" property="homeUrl" />
@@ -13,10 +13,10 @@
         <result column="groupName" jdbcType="VARCHAR" property="groupName" />
     </resultMap>
     <sql id="BASE_TABLE">
-        mb_admin
+        mb_user
     </sql>
     <sql id="BASE_COLUMN">
-        id, username, password, homeUrl, email, nick_name, create_time, login_time, groupName
+        uid, username, password, homeUrl, email, nick_name, create_time, login_time, groupName
     </sql>
 
     <update id="updateUserInfo" parameterType="com.alivin.myblog.model.UserDomain">
@@ -27,13 +27,13 @@
                 password = #{password, jdbcType=VARCHAR},
             </if>
             <if test="screenName != null">
-                screenName = #{screenName, jdbcType=VARCHAR},
+                nickName = #{nickName, jdbcType=VARCHAR},
             </if>
             <if test="email != null">
                 email = #{email, jdbcType=VARCHAR},
             </if>
         </set>
-        WHERE id = #{id, jdbcType=BIGINT}
+        WHERE uid = #{uid, jdbcType=INTEGER}
     </update>
 
     <select id="getUserInfoById" parameterType="long" resultMap="BaseResultMap">
@@ -42,7 +42,7 @@
         FROM
         <include refid="BASE_TABLE"/>
         WHERE
-        id = #{id, jdbcType=BIGINT}
+        uid = #{uid, jdbcType=INTEGER}
     </select>
 
     <select id="getUserInfoByCond" resultMap="BaseResultMap">

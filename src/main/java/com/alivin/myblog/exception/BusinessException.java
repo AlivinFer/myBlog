@@ -1,6 +1,6 @@
 package com.alivin.myblog.exception;
 
-import com.alivin.myblog.utils.CommonResult;
+import com.alivin.myblog.utils.APIResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ public class BusinessException extends RuntimeException {
     private final static Logger LOGGER = LoggerFactory.getLogger(BusinessException.class);
     protected String errorCode;
     protected String[] errorMessageArguments;
-    public CommonResult result;
+    protected APIResponse apiResponse;
 
     protected BusinessException() {
         this("");
@@ -57,12 +57,12 @@ public class BusinessException extends RuntimeException {
         return businessException;
     }
 
-    public static BusinessException fromCommonResult(CommonResult commonResult) {
+    public static <T> BusinessException fromCommonResult(APIResponse<T> apiResponse) {
         BusinessException businessException = new BusinessException();
-        if(commonResult == null) {
-            commonResult = CommonResult.failed("NULL");
+        if(apiResponse == null) {
+            apiResponse = APIResponse.fail("NULL");
         }
-        businessException.result = commonResult;
+        businessException.apiResponse = apiResponse;
         return businessException;
     }
 
@@ -74,20 +74,18 @@ public class BusinessException extends RuntimeException {
         return this;
     }
 
-    public CommonResult getResult() {
-        if (this.result != null) {
-            return this.result;
-        } else {
-            this.result = CommonResult.failed(this.errorCode);
-            if(this.getErrorMessageArguments() != null && this.getErrorMessageArguments().length > 0) {
+    public <T> APIResponse getResult() {
+        if (this.apiResponse == null) {
+            this.apiResponse = APIResponse.fail(this.errorCode);
+            if (this.getErrorMessageArguments() != null && this.getErrorMessageArguments().length > 0) {
                 try {
-                    this.result.setMessage(MessageFormat.format(this.result.getMessage(), (Object) this.getErrorMessageArguments()));
+                    this.apiResponse.setMsg(MessageFormat.format(this.apiResponse.getMsg(), (Object) this.getErrorMessageArguments()));
                 } catch (Exception var2) {
                     LOGGER.error(var2.getMessage());
                 }
             }
-            return this.result;
         }
+        return this.apiResponse;
 
     }
 

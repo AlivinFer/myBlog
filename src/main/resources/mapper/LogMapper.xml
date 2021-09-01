@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.alivin.myblog.dao.LogDao">
+    <resultMap id="BaseResultMap" type="com.alivin.myblog.model.LogDomain">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <id column="action" jdbcType="VARCHAR" property="action"/>
+        <id column="data" jdbcType="VARCHAR" property="data"/>
+        <id column="authorId" jdbcType="VARCHAR" property="authorId"/>
+        <id column="ip" jdbcType="VARCHAR" property="ip"/>
+        <id column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <sql id="BASE_TABLE">
+        mb_logs
+    </sql>
+    <sql id="BASE_COLUMN">
+        id, action, data, authorId, ip, create_time
+    </sql>
+
+    <insert id="addLog" parameterType="com.alivin.myblog.model.LogDomain">
+        INSERT INTO
+        <include refid="BASE_TABLE"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            action, data, authorId, ip, create_time,
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{action, jdbcType=VARCHAR}, #{data, jdbcType=VARCHAR},
+            #{authorId, jdbcType=INTEGER}, #{ip, jdbcType=VARCHAR}, now()
+        </trim>
+    </insert>
+
+    <delete id="deleteLogById" parameterType="integer">
+        DELETE FROM
+        <include refid="BASE_TABLE"/>
+        WHERE id = #{id, jdbcType=INTEGER}
+    </delete>
+
+    <select id="getLogs" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BASE_COLUMN"/>
+        FROM
+        <include refid="BASE_COLUMN"/>
+        ORDER BY id DESC
+    </select>
+</mapper>

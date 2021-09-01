@@ -23,9 +23,9 @@ public interface UserDao {
 
     /**
      * 根据主键编号获取用户信息
-     * @param id 用户 id
+     * @param uid 用户 uid
      */
-    UserDomain getUserInfoById(@Param("id") Long id);
+    UserDomain getUserInfoById(@Param("uid") Integer uid);
 
     /**
      * 根据用户名和密码获取用户信息

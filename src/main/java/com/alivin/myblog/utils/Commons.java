@@ -1,6 +1,7 @@
 package com.alivin.myblog.utils;
 
 import com.alivin.myblog.constant.WebConst;
+import com.github.pagehelper.PageInfo;
 import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Component;
 import java.util.Random;
 
 /**
+ * 公共函数
+ *
  * @author Fer
  * @date 2021/8/14
  */
@@ -102,5 +105,12 @@ public class Commons {
         } else {
             return defalutValue;
         }
+    }
+
+    /**
+     * 判断分页中是否有数据
+     */
+    public static boolean is_empty(PageInfo paginator) {
+        return paginator == null || (paginator.getList() == null) || (paginator.getList().size() == 0);
     }
 }

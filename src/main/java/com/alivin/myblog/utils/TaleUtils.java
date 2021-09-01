@@ -1,6 +1,7 @@
 package com.alivin.myblog.utils;
 
 import com.alivin.myblog.constant.WebConst;
+import com.alivin.myblog.controller.admin.AttachController;
 import com.alivin.myblog.exception.BusinessException;
 import com.alivin.myblog.model.UserDomain;
 import org.apache.commons.lang3.StringUtils;
@@ -195,7 +196,7 @@ public class TaleUtils {
     /**
      * 设置记住密码cookie
      */
-    public static void setCookie(HttpServletResponse response, Long id) {
+    public static void setCookie(HttpServletResponse response, Integer id) {
         try {
             String val = Tools.enAes(id.toString(), WebConst.AES_SALT);
 //            boolean isSSL = false;
@@ -397,6 +398,28 @@ public class TaleUtils {
         File file = new File("");
         return file.getAbsolutePath() + "/";
     }
+
+    public static String getFileKey(String name) {
+        String prefix = "/upload/" + DateKit.dateFormat(new Date(), "yyyy/MM");
+        if (!new File(AttachController.CLASSPATH + prefix).exists()) {
+            new File(AttachController.CLASSPATH + prefix).mkdirs();
+        }
+
+        name = StringUtils.trimToNull(name);
+        if (name == null) {
+            return prefix + "/" + UUID.UU32() + "." + null;
+        } else {
+            name = name.replace('\\', '/');
+            name = name.substring(name.lastIndexOf("/") + 1);
+            int index = name.lastIndexOf(".");
+            String ext = null;
+            if (index >= 0) {
+                ext = StringUtils.trimToNull(name.substring(index + 1));
+            }
+            return prefix + "/" + UUID.UU32() + "." + (ext == null ? null : (ext));
+        }
+    }
+
 
 
 }

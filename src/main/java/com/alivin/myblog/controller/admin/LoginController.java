@@ -1,10 +1,13 @@
 package com.alivin.myblog.controller.admin;
 
+import com.alivin.myblog.constant.LogActions;
 import com.alivin.myblog.constant.WebConst;
+import com.alivin.myblog.controller.BaseController;
 import com.alivin.myblog.exception.BusinessException;
 import com.alivin.myblog.model.UserDomain;
-import com.alivin.myblog.service.api.UserService;
-import com.alivin.myblog.utils.CommonResult;
+import com.alivin.myblog.service.log.LogService;
+import com.alivin.myblog.service.user.UserService;
+import com.alivin.myblog.utils.APIResponse;
 import com.alivin.myblog.utils.IPKit;
 import com.alivin.myblog.utils.MapCache;
 import com.alivin.myblog.utils.TaleUtils;
@@ -31,11 +34,14 @@ import java.io.IOException;
  * @author Fer
  * @date 2021/8/13
  */
-@Api("登录相关接口")
+@Api(tags = "LoginController", description = "登录相关接口")
 @Controller
 @RequestMapping(value = "/admin")
-public class LoginController {
+public class LoginController extends BaseController {
     private final static Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
+
+    @Autowired
+    private LogService logService;
 
     @Autowired
     private UserService userService;
@@ -45,14 +51,13 @@ public class LoginController {
     @ApiOperation("跳转登录页")
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login() {
-
         return "/admin/login";
     }
 
     @ApiOperation("登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public <T> CommonResult<T> toLogin(
+    public <T> APIResponse<T> toLogin(
             HttpServletRequest request,
             HttpServletResponse response,
             @ApiParam(name = "username", value = "用户名", required = true)
@@ -66,19 +71,20 @@ public class LoginController {
                     String rememberMe
     ) {
         // 获取ip并过滤登录时缓存的bug
-        String ip = IPKit.getAddrByRequest(request);
+        String ip = IPKit.getIPAddrByRequest(request);
         Integer error_count = cache.hget("login_error_count",ip);
         try {
             UserDomain userInfo = userService.login(username, password);
             request.getSession().setAttribute(WebConst.LOGIN_SESSION_KEY, userInfo);
             if (StringUtils.isNotBlank(rememberMe)) {
-                TaleUtils.setCookie(response, userInfo.getId());
+                TaleUtils.setCookie(response, userInfo.getUid());
             }
+            logService.addLog(LogActions.LOGIN.getAction(), null, request.getRemoteAddr(), userInfo.getUid());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             error_count = null == error_count ? 1 : error_count + 1;
             if (error_count > 3) {
-                return CommonResult.failed("您输入密码已经错误超过3次，请10分钟后尝试");
+                return APIResponse.fail("您输入密码已经错误超过3次，请10分钟后尝试");
             }
             cache.hset("login_error_count", ip,error_count, 10 * 60); // 加入ip的过滤
             String msg = "登录失败";
@@ -87,15 +93,15 @@ public class LoginController {
             } else {
                 LOGGER.error(msg, e);
             }
-            return CommonResult.failed(msg);
+            return APIResponse.fail(msg);
         }
-        return CommonResult.success("登录成功");
+        return APIResponse.success();
     }
 
     @ApiOperation("注销")
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout")
     @ResponseBody
-    public void logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    public void logout(HttpServletResponse response, HttpSession session) {
         session.removeAttribute(WebConst.LOGIN_SESSION_KEY);
         Cookie cookie = new Cookie(WebConst.USER_IN_COOKIE, "");
         cookie.setValue(null);

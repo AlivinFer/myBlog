@@ -5,12 +5,14 @@ import sun.misc.BASE64Encoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.util.Random;
 
 /**
  * @author Fer
  * @date 2021/8/14
  */
 public class Tools {
+    private static final Random random = new Random();
 
     public static String enAes(String data, String key) throws Exception {
         Cipher cipher = Cipher.getInstance("AES");
@@ -34,5 +36,9 @@ public class Tools {
      */
     public static boolean isNumber(String str) {
         return null != str && 0 != str.trim().length() && str.matches("\\d*");
+    }
+
+    public static int rand(int min, int max) {
+        return random.nextInt(max) % (max - min + 1) + min;
     }
 }

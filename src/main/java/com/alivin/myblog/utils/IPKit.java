@@ -14,7 +14,7 @@ import java.util.Enumeration;
  */
 public class IPKit {
 
-    public static String getAddrByRequest(HttpServletRequest request) {
+    public static String getIPAddrByRequest(HttpServletRequest request) {
         String ip = request.getHeader("x-forward-for");
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");

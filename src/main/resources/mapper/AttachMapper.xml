@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.alivin.myblog.dao.AttachDao">
+    <resultMap id="BaseResultMap" type="com.alivin.myblog.model.AttachDomain">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <id column="fname" jdbcType="VARCHAR" property="fname"/>
+        <id column="ftype" jdbcType="VARCHAR" property="ftype"/>
+        <id column="fkey" jdbcType="VARCHAR" property="fkey"/>
+        <id column="authorId" jdbcType="INTEGER" property="authorId"/>
+        <id column="created" jdbcType="INTEGER" property="created"/>
+    </resultMap>
+
+    <sql id="BASE_TABLE">
+        mb_attach
+    </sql>
+
+    <sql id="BASE_COLUMN">
+        id, fname, ftype, fkey, authorId, created
+    </sql>
+    
+    <sql id="USER_TABLE">
+        <include refid="com.alivin.myblog.dao.UserDao.BASE_TABLE"/>
+    </sql>
+
+    <!-- 关联查询的用户表需要的字段 -->
+    <sql id="REL_USER_COLUMN">
+        username
+    </sql>
+
+    <insert id="addAttach" parameterType="com.alivin.myblog.model.AttachDomain">
+        INSERT INTO
+        <include refid="BASE_TABLE"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            fname, ftype, fkey, authorId, created,
+        </trim>
+        <trim  prefix="VALUES(" suffix=")" suffixOverrides=",">
+            #{fname, jdbcType=VARCHAR}, #{ftype, jdbcType=VARCHAR}, #{fkey, jdbcType=VARCHAR}, #{authorId, jdbcType=INTEGER}, UNIX_TIMESTAMP(NOW()),
+        </trim>
+    </insert>
+
+    <insert id="batchAddAttach" parameterType="list" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        <include refid="BASE_TABLE"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            fname, ftype, fkey, authorId, created,
+        </trim>
+        VALUES
+        <foreach collection="list" item="AttAchDomain" index="index" separator=",">
+            (
+            <trim suffix="" suffixOverrides=",">
+                #{fname, jdbcType=VARCHAR}, #{ftype, jdbcType=VARCHAR}, #{authorId, jdbcType=INTEGER}, UNIX_TIMESTAMP(NOW()),
+            </trim>
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteAttach" parameterType="integer">
+        DELETE FROM
+        <include refid="BASE_TABLE"/>
+        WHERE id = #{id}
+    </delete>
+    
+    <update id="updateAttach" parameterType="com.alivin.myblog.model.AttachDomain">
+        UPDATE
+        <include refid="BASE_TABLE"/>
+        <set>
+            <if test="fname != null">
+                fname = #{fname}
+            </if>
+            <if test="ftype != null">
+                ftype = #{ftype, jdbcType=VARCHAR},
+            </if>
+            <if test="authorId != null">
+                authorId = #{authorId,jdbcType=INTEGER},
+                created = UNIX_TIMESTAMP(NOW()),
+            </if>
+        </set>
+    </update>
+
+    <select id="getAttachById" parameterType="integer" resultMap="BaseResultMap">
+        SELECT
+        <trim suffix="" suffixOverrides=",">
+            <include refid="BASE_COLUMN"/>
+            <include refid="REL_USER_COLUMN"/>
+        </trim>
+        FROM
+        <include refid="BASE_TABLE"/> AS att
+        LEFT JOIN <include refid="USER_TABLE"/> AS u
+        ON att.authorId = u.uid
+        WHERE att.id = #{id}
+    </select>
+
+    <select id="getAllAttach" resultMap="BaseResultMap">
+        SELECT
+        <trim suffix="" suffixOverrides=",">
+            <include refid="BASE_COLUMN"/>
+            <include refid="REL_USER_COLUMN"/>
+        </trim>
+        FROM
+        <include refid="BASE_TABLE"/> AS aa
+        LEFT JOIN <include refid="USER_TABLE"/> AS u
+        ON aa.authorId = u.uid
+        ORDER BY aa.created DESC
+    </select>
+
+    <select id="countAttaches" resultType="java.lang.Long">
+        SELECT count(*)
+        FROM
+        <include refid="USER_TABLE"/>
+    </select>
+</mapper>

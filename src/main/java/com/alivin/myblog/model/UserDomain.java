@@ -1,6 +1,7 @@
 package com.alivin.myblog.model;
 
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,7 +14,7 @@ import java.util.Date;
  */
 @Data
 public class UserDomain {
-    private Long id;
+    private Integer uid;
 
     private String username;
 
