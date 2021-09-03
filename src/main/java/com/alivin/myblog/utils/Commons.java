@@ -6,6 +6,9 @@ import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -113,4 +116,111 @@ public class Commons {
     public static boolean is_empty(PageInfo paginator) {
         return paginator == null || (paginator.getList() == null) || (paginator.getList().size() == 0);
     }
+
+    /**
+     * 截取字符串
+     */
+    public static String substr(String str, int len) {
+        if (str.length() > len) {
+            return str.substring(0, len);
+        }
+        return str;
+    }
+
+    /**
+     * 格式化unix时间戳为日期
+     */
+    public static String fmtdate(Integer unixTime) {
+        return fmtdate(unixTime, "yyyy-MM-dd");
+    }
+
+    /**
+     * 格式化unix时间戳为日期
+     */
+    public static String fmtdate(Integer unixTime, String patten) {
+        if (null != unixTime && StringUtils.isNotBlank(patten)) {
+            return DateKit.formatDateByUnixTime(unixTime, patten);
+        }
+        return "";
+    }
+
+    /**
+     * 英文格式的日期
+     */
+    public static String fmtdate_en(Integer unixTime){
+        String fmtdate = fmtdate(unixTime, "d,MMM,yyyy");
+        String[] dateArr = fmtdate.split(",");
+        String rs = "<span>" + dateArr[0] + "</span> " + dateArr[1] + "  " + dateArr[2];
+        return rs;
+    }
+
+    /**
+     * 英文格式的日期-月，日
+     */
+    public static String fmtdate_en_m(Integer unixTime){
+        return fmtdate(unixTime,"MMM d");
+    }
+
+    /**
+     * 日期-年
+     */
+    public static String fmtdate_en_y(Integer unixTime){
+        return fmtdate(unixTime,"yyyy");
+    }
+
+    /**
+     * 字符串转Date
+     */
+    public static Date fmtdate_date(String date){
+        if (StringUtils.isNotBlank(date)){
+            return DateKit.dateFormat(date, "yyyy年MM月");
+        }
+        return null;
+    }
+
+    /**
+     * 根据unix时间戳获取Date
+     */
+    public static Date fmtdate_unxtime(Integer nuixTime){
+        if (null != nuixTime){
+            return DateKit.getDateByUnixTime(nuixTime);
+        }
+        return  null;
+    }
+
+    /**
+     * 获取社交的链接地址
+     */
+    public static Map<String, String> social() {
+        final String prefix = "social_";
+        Map<String, String> map = new HashMap<>();
+        map.put("csdn", WebConst.initConfig.get(prefix + "csdn"));
+        map.put("jianshu", WebConst.initConfig.get(prefix + "jianshu"));
+        map.put("resume", WebConst.initConfig.get(prefix + "resume"));
+        map.put("weibo", WebConst.initConfig.get(prefix + "weibo"));
+        map.put("zhihu", WebConst.initConfig.get(prefix + "zhihu"));
+        map.put("github", WebConst.initConfig.get(prefix + "github"));
+        map.put("twitter", WebConst.initConfig.get(prefix + "twitter"));
+        return map;
+    }
+
+    /**
+     * 返回作品文章地址
+     * @param cid
+     * @return
+     */
+    public static String photoPermalink(Integer cid) {
+        return site_url("/photo/article/" + cid.toString());
+    }
+
+    /**
+     * 返回blog文章地址
+     * @param cid
+     * @return
+     */
+    public static String blogPermalink(Integer cid) {
+        return site_url("/blog/article/" + cid.toString());
+    }
+
+
 }

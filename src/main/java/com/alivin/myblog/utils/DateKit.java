@@ -11,6 +11,13 @@ import java.util.*;
  * @date 2021/8/18
  */
 public class DateKit {
+    public static final int INTERVAL_DAY = 1;
+    public static final int INTERVAL_WEEK = 2;
+    public static final int INTERVAL_MONTH = 3;
+    public static final int INTERVAL_YEAR = 4;
+    public static final int INTERVAL_HOUR = 5;
+    public static final int INTERVAL_MINUTE = 6;
+    public static final int INTERVAL_SECOND = 7;
     public static final Date tempDate = new Date(new Long("-2177481952000"));
     private static final List<SimpleDateFormat> dateFormats = new ArrayList<SimpleDateFormat>(12) {
         private static final long serialVersionUID = 2249396579858199535L;

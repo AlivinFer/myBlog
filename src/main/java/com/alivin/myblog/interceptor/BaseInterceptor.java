@@ -82,8 +82,22 @@ public class BaseInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         //一些工具类和公共方法
-        request.setAttribute("commons", commons);//一些工具类和公共方法
+        OptionsDomain ov = optionService.getOptionByName("site_record");
+        request.setAttribute("commons", commons);
+        request.setAttribute("option", ov);
         request.setAttribute("adminCommons", adminCommons);
+        initSiteConfig(request);
+    }
+
+    private void initSiteConfig(HttpServletRequest request) {
+        if (WebConst.initConfig.isEmpty()){
+            List<OptionsDomain> options = optionService.getOptions();
+            Map<String, String> queries = new HashMap<>();
+            options.forEach(option -> {
+                queries.put(option.getName(), option.getValue());
+            });
+            WebConst.initConfig = queries;
+        }
     }
 
 

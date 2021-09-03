@@ -3,13 +3,19 @@ package com.alivin.myblog.controller.admin;
 import com.alivin.myblog.constant.LogActions;
 import com.alivin.myblog.constant.WebConst;
 import com.alivin.myblog.controller.BaseController;
+import com.alivin.myblog.dto.StatisticsDto;
 import com.alivin.myblog.exception.BusinessException;
+import com.alivin.myblog.model.CommentDomain;
+import com.alivin.myblog.model.ContentDomain;
+import com.alivin.myblog.model.LogDomain;
 import com.alivin.myblog.model.UserDomain;
 import com.alivin.myblog.service.log.LogService;
+import com.alivin.myblog.service.site.SiteService;
 import com.alivin.myblog.service.user.UserService;
 import com.alivin.myblog.utils.APIResponse;
 import com.alivin.myblog.utils.GsonUtils;
 import com.alivin.myblog.utils.TaleUtils;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author Fer
@@ -42,10 +49,23 @@ public class IndexController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private SiteService siteService;
+
     @ApiOperation("进入首页")
     @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index() {
+    public String index(HttpServletRequest request) {
         LOGGER.info("Enter admin index method");
+        List<CommentDomain> comments = siteService.getComments(5);
+        List<ContentDomain> contents = siteService.getNewArticles(5);
+        StatisticsDto statistics = siteService.getStatistics();
+        PageInfo<LogDomain> logs = logService.getLogs(1, 5);
+        List<LogDomain> list = logs.getList();
+        request.setAttribute("comments", comments);
+        request.setAttribute("articles", contents);
+        request.setAttribute("statistics", statistics);
+        request.setAttribute("logs", list);
+        LOGGER.info("Exit admin index method");
         return "admin/index";
     }
 
