@@ -109,7 +109,7 @@
         success: function (result) {
           $('#cform #mid').val('');
           $('#cform #cname').val('');
-          if (result && result.code == 'success') {
+          if (result && result.code === 'success') {
             tale.alertOkAndReload('分类保存成功');
           } else {
             tale.alertError(result.msg || '分类保存失败');

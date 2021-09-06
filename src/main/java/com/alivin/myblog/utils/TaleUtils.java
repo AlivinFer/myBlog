@@ -222,9 +222,6 @@ public class TaleUtils {
 
     /**
      * markdown转换为html
-     *
-     * @param markdown
-     * @return
      */
     public static String mdToHtml(String markdown) {
         if (StringUtils.isBlank(markdown)) {

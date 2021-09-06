@@ -70,8 +70,8 @@ public class AttachController {
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     public void fileUploadToQiniuCloud(HttpServletRequest request,
                                        HttpServletResponse response,
-                                       @ApiParam(name = "editorMd-image-file", value = "文件数组", required = true)
-                                       @RequestParam(name = "editorMd-image-file", required = true)
+                                       @ApiParam(name = "editormd-image-file", value = "文件数组", required = true)
+                                       @RequestParam(name = "editormd-image-file", required = true)
                                        MultipartFile file) {
         // 文件上传
         try {

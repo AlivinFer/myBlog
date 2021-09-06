@@ -51,7 +51,7 @@ public class LoginController extends BaseController {
     @ApiOperation("跳转登录页")
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login() {
-        return "/admin/login";
+        return "admin/login";
     }
 
     @ApiOperation("登录")
@@ -110,7 +110,7 @@ public class LoginController extends BaseController {
         cookie.setPath("/");
         response.addCookie(cookie);
         try {
-            response.sendRedirect("/admin/login");
+            response.sendRedirect("admin/login");
         } catch (IOException e) {
             e.printStackTrace();
             LOGGER.info("注销失败", e);

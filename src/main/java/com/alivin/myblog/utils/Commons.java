@@ -6,10 +6,9 @@ import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 公共函数
@@ -148,7 +147,7 @@ public class Commons {
      * 英文格式的日期
      */
     public static String fmtdate_en(Integer unixTime){
-        String fmtdate = fmtdate(unixTime, "d,MMM,yyyy");
+        String fmtdate = fmtdate(unixTime, "yyyy, MM, dd");
         String[] dateArr = fmtdate.split(",");
         String rs = "<span>" + dateArr[0] + "</span> " + dateArr[1] + "  " + dateArr[2];
         return rs;
@@ -222,5 +221,126 @@ public class Commons {
         return site_url("/blog/article/" + cid.toString());
     }
 
+    /**
+     * 获取网站标题
+     * @return
+     */
+    public static String site_title() {
+        return site_option("site_title");
+    }
 
+    /**
+     * 获取google网站验证码
+     */
+    public static String google_site_verification(){
+        return site_option("google_site_verification");
+    }
+
+    /**
+     * 获取百度网站验证码
+     */
+    public static String baidu_site_verification(){
+        return site_option("baidu_site_verification");
+    }
+
+    /**
+     * 获取网站的备案信息
+     */
+    public static String site_record() {
+        return site_option("site_record");
+    }
+
+    /**
+     * 获取文章第一张图片
+     */
+    public static String show_thumb(String content) {
+        content = TaleUtils.mdToHtml(content);
+        if (content.contains("<img")) {
+            String img = "";
+            String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
+            Pattern p_image = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE);
+            Matcher m_image = p_image.matcher(content);
+            if (m_image.find()) {
+                img = img + "," + m_image.group();
+                // //匹配src
+                Matcher m = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)").matcher(img);
+                if (m.find()) {
+                    return m.group(1);
+                }
+            }
+        }
+        return "";
+    }
+
+    /**
+     * 如果blog没有配图，随机获取一张
+     */
+    public static String randomBlogPic(Long seed){
+        return "/site/images/blog-images/blog-" + random( seed,12,".jpg");
+    }
+
+    /**
+     * 获取文章中所有的文字
+     */
+    public static List<String> show_all_p(String content){
+        List<String> rs = new LinkedList();
+        content = TaleUtils.mdToHtml(content);
+        String reg = "<[a-zA-Z]+.*?>([\\s\\S]*?)</[a-zA-Z]*>";
+
+        Pattern p = Pattern.compile(reg, Pattern.MULTILINE);
+        content = content.replace("&nbsp;", "");
+        Matcher m = p.matcher(content);
+        while(m.find()) {
+            String data = m.group(1).trim();
+            if(!"".equals(data) && !data.contains("<img")) {
+                System.out.println(data);
+                data = "<p>" + data + "</p>";
+                rs.add(data);
+            }
+        }
+        return rs;
+    }
+
+    /**
+     * 获取文章中的所有图片
+     */
+    public static List<String> show_all_thumb(String content) {
+        List<String> rs = new LinkedList<>();
+        content = TaleUtils.mdToHtml(content);
+        if (content.contains("<img")) {
+            String img = "";
+            String regEx_img = "<[a-zA-Z]+.*?>([\\s\\S]*?)</[a-zA-Z]*>";
+            Pattern p_image = Pattern.compile(regEx_img, Pattern.MULTILINE);
+            Matcher m_image = p_image.matcher(content);
+            while (m_image.find()) {
+                String data = m_image.group(1).trim();
+                if(!"".equals(data) && data.contains("<img")) {
+                    System.out.println(data);
+                    // //匹配src
+                    Matcher m = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)").matcher(data);
+                    while (m.find()){
+                        //  if (m.find()) {
+                        rs.add(m.group(1));
+                    }
+                }
+
+            }
+        }
+        return rs;
+    }
+
+    /**
+     * 显示文章内容，转换markdown为html
+     *
+     * @param value
+     * @return
+     */
+    public static String article(String value) {
+        if (StringUtils.isNotBlank(value)) {
+            value = value.replace("<!--more-->", "\r\n");
+            value = value.replace("<!-- more -->", "\r\n");
+            return TaleUtils.mdToHtml(value);
+        }
+        return "";
+    }
 }

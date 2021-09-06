@@ -5,7 +5,7 @@
         <id column="coid" jdbcType="INTEGER" property="coid"/>
         <id column="cid" jdbcType="INTEGER" property="coid"/>
         <id column="created" jdbcType="INTEGER" property="created"/>
-        <id column="author" jdbcType="VARCHAR" property="authorId"/>
+        <id column="author" jdbcType="VARCHAR" property="author"/>
         <id column="authorId" jdbcType="INTEGER" property="authorId"/>
         <id column="ownerId" jdbcType="INTEGER" property="ownerId"/>
         <id column="mail" jdbcType="VARCHAR" property="mail"/>

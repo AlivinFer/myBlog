@@ -49,10 +49,10 @@ public class CategoryController extends BaseController {
     public <T> APIResponse<T> addCategory(
             @ApiParam(name = "cname", value = "分类名", required = true)
             @RequestParam(name = "cname", required = true)
-                    String cname,
+            String cname,
             @ApiParam(name = "mid", value = "meta编号", required = false)
             @RequestParam(name = "mid", required = false)
-                    Integer mid
+            Integer mid
     ){
         try {
             metaService.saveMeta(Types.CATEGORY.getType(),cname,mid);
@@ -77,7 +77,7 @@ public class CategoryController extends BaseController {
     public <T> APIResponse<T> delete(
             @ApiParam(name = "mid", value = "主键", required = true)
             @RequestParam(name = "mid", required = true)
-                    Integer mid
+            Integer mid
     ){
         try {
             metaService.deleteMetaById(mid);
